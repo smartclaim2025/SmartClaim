@@ -1,6 +1,8 @@
 # SmartClaim
 SmartClaim is a browser extension and bot system designed to automate bonus code claims. 
 
+DM to get your FREE CREDIT by using the promo code: `CLAIMNOW`
+
 🔥 Features
 
 - ⚡ Turbo mode for ultra-fast claiming
@@ -38,4 +40,4 @@ Failed - 20
 
 - Telegram: @stakeautoclaim
 
-DM to become our regional ambassador !!
+DM to get your FREE CREDIT by using the promo code: `CLAIMNOW`
