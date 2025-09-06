@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartClaim 3.0 - Claim Results</title>
+    <style>
+        /* ===== Fonts ===== */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+        /* ===== Theme Variables ===== */
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #8b5cf6;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --background: #0f172a;
+            --surface: #1e293b;
+            --surface-light: #334155;
+            --surface-lighter: #475569;
+            --text-primary: #f1f5f9;
+            --text-secondary: #e2e8f0;
+            --text-muted: #94a3b8;
+            --text-dark: #64748b;
+            --border: rgba(148, 163, 184, 0.2);
+            --glass-bg: rgba(30, 41, 59, 0.8);
+            --glass-border: rgba(148, 163, 184, 0.2);
+            --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            --blur: blur(20px);
+            --transition: all 0.2s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 500px;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--background);
+            color: var(--text-secondary);
+        }
+
+        .app-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-xl);
+        }
+
+        .app-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .app-logo {
+            font-size: 20px;
+        }
+
+        .app-name {
+            font-size: 16px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .app-version {
+            background: rgba(255,255,255,0.2);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 500;
+        }
+
+        .content {
+            padding: 20px;
+            background: var(--glass-bg);
+            backdrop-filter: var(--blur);
+            -webkit-backdrop-filter: var(--blur);
+            min-height: calc(100vh - 64px);
+        }
+
+        .stats {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            flex: 1;
+            background: rgba(51, 65, 85, 0.6);
+            border: 1px solid var(--border);
+            padding: 12px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            background: rgba(51, 65, 85, 0.8);
+            transform: translateY(-1px);
+        }
+
+        .stat-number {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .success { color: var(--success); }
+        .failed { color: var(--error); }
+        .total { color: var(--primary); }
+
+        .table-section {
+            background: rgba(51, 65, 85, 0.4);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .table-header {
+            color: white;
+            padding: 12px 16px;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-container {
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: rgba(51, 65, 85, 0.6);
+            color: var(--text-primary);
+            padding: 12px 8px;
+            font-size: 11px;
+            font-weight: 700;
+            text-align: left;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid var(--border);
+            position: sticky;
+            top: 0;
+        }
+
+        td {
+            padding: 10px 8px;
+            border-bottom: 1px solid var(--border);
+            font-size: 12px;
+            vertical-align: middle;
+            color: var(--text-secondary);
+        }
+
+        tr:hover {
+            background: rgba(51, 65, 85, 0.3);
+        }
+
+        tr:nth-child(even) {
+            background: rgba(51, 65, 85, 0.2);
+        }
+
+        tr:nth-child(even):hover {
+            background: rgba(51, 65, 85, 0.4);
+        }
+
+        .status-badge {
+            padding: 3px 8px;
+            border-radius: 16px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .status-success {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .status-failed {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--error);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .code-cell {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            color: var(--primary);
+            max-width: 100px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .account-cell {
+            font-weight: 600;
+            color: var(--text-primary);
+            max-width: 80px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .datetime-cell {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: rgba(51, 65, 85, 0.4);
+            border-top: 1px solid var(--border);
+        }
+
+        .pagination-info {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .pagination-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .pagination-btn {
+            padding: 6px 12px;
+            border: 1px solid var(--border);
+            background: rgba(51, 65, 85, 0.6);
+            color: var(--text-secondary);
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .pagination-btn:hover:not(:disabled) {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            transform: translateY(-1px);
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(51, 65, 85, 0.6);
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(51, 65, 85, 0.8);
+            transform: translateY(-1px);
+            border-color: var(--primary);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.6;
+        }
+
+        .empty-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .empty-subtitle {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        /* Scrollbar styling */
+        .table-container::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .table-container::-webkit-scrollbar-track {
+            background: rgba(51, 65, 85, 0.3);
+            border-radius: 2px;
+        }
+
+        .table-container::-webkit-scrollbar-thumb {
+            background: rgba(99, 102, 241, 0.5);
+            border-radius: 2px;
+        }
+
+        .table-container::-webkit-scrollbar-thumb:hover {
+            background: rgba(99, 102, 241, 0.7);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-header">
+        <div class="app-title">
+            <h1 class="app-name">SmartClaim 3.0</h1>
+        </div>
+        <div class="app-version" id="appVersion">v3.0.1</div>
+    </div>
+
+    <div class="content">
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number total" id="totalClaims">0</div>
+                <div class="stat-label">Total Claims</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number success" id="successClaims">0</div>
+                <div class="stat-label">Successful</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number failed" id="failedClaims">0</div>
+                <div class="stat-label">Failed</div>
+            </div>
+        </div>
+
+        <div class="table-section">
+            <div class="table-header">
+                <span>📊 Activity Logs</span>
+                <span id="totalRecords">0 records</span>
+            </div>
+            
+            <div class="table-container">
+                <table id="claimTable">
+                    <thead>
+                        <tr>
+                            <th>Bonus Code</th>
+                            <th>Account</th>
+                            <th>Status</th>
+                            <th>Date/Time</th>
+                        </tr>
+                    </thead>
+                    <tbody id="claimTableBody">
+                        <!-- Logs will be inserted here -->
+                    </tbody>
+                </table>
+                
+                <div id="emptyState" class="empty-state" style="display: none;">
+                    <div class="empty-icon">🎯</div>
+                    <div class="empty-title">No Claims Yet</div>
+                    <div class="empty-subtitle">Start claiming bonus codes and your results will appear here</div>
+                </div>
+            </div>
+
+            <div class="pagination" id="paginationSection" style="display: none;">
+                <div class="pagination-info" id="pageInfo">Page 1 of 1</div>
+                <div class="pagination-controls">
+                    <button class="pagination-btn" id="prevPage" disabled>Prev</button>
+                    <button class="pagination-btn" id="nextPage" disabled>Next</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button id="exportCSV" class="btn-primary">
+                <span>📥</span>
+                <span>Export CSV</span>
+            </button>
+            <button id="clearLogs" class="btn-secondary">
+                <span>🗑️</span>
+                <span>Clear All</span>
+            </button>
+        </div>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+</html>
